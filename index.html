@@ -318,13 +318,13 @@ button,a{-webkit-tap-highlight-color:transparent}
     <form class="card" id="formLogin" autocomplete="off">
       <img class="logo-card" id="logoCard" alt="Logo CECyTE">
       <h2 id="formTitle">Biblioteca Virtual<br>CECyTE Oaxaca</h2>
-      <p class="lema">Aprende, explora y crece.<br>Escribe tu número de lista para entrar.</p>
-      <div class="error" id="err">Escribe tu número de lista y tu nombre para continuar.</div>
-      <div class="field"><input id="numero" type="text" inputmode="numeric" placeholder="Número de lista" autofocus></div>
-      <div class="field"><span class="ico">👤</span><input id="usuario" type="text" maxlength="40" placeholder="Tu nombre (el que quieras)"></div>
+      <p class="lema">Aprende, explora y crece.<br>Escriba su matricula para entrar.</p>
+      <div class="error" id="err">Escriba su matricula y su nombre para continuar.</div>
+      <div class="field"><input id="numero" type="text" inputmode="numeric" placeholder="Matricula" autofocus></div>
+      <div class="field"><span class="ico">👤</span><input id="usuario" type="text" maxlength="40" placeholder="usuario"></div>
       <label class="row"><input type="checkbox" id="recordar" checked> Mantener sesión iniciada</label>
       <button class="btn" type="submit" id="btnSubmit">Entrar</button>
-      <div class="links">¿No tienes tu número? Pídeselo a tu profesor.</div>
+      <div class="links">¿No tiene su matricula? revise si credencial .</div>
     </form>
   </div>
 
@@ -536,9 +536,9 @@ const LIBROS = [
 ];
 
 /* ---------- ACCESO POR NÚMERO DE LISTA ----------
-   Reemplaza estos valores por los números del documento del profe.
    Cada número va entre comillas y separado por coma. */
-const NUMEROS_PERMITIDOS = ["1","2","3","4","5","6","7","8","9","10"];
+const NUMEROS_PERMITIDOS = ["24420070180007","24420070180008", "24420070180001","24420070180009","24420070180207" ,"24420070180002","24420070180010","24420070180011","24420070180012","24420070180015", "24420070180018", "24420070180003", "24420070180020", "24420070180021", "24420070180004", "24420070180023","24420070180024", "24420070180026", "24420070180237", "24420070180025",
+"24420070180028", "24420070180247", "23420070180274", "24420070180029", "24420070180030","24420070180031", "24420070180032", "24420070180208", "24420070180033", "24420070180013", "24420070180035", "24420070180036"];
 
 /* ---------- ESTADO Y SESIÓN ---------- */
 let vista="inicio", fSem="todos", fFmt="todos", fNiv="todos", fCat="todos", texto="";
@@ -547,7 +547,7 @@ let recientes = [];
 let numeroActual = null;
 const CLAVE_SESION = "cecyteo_sesion";
 
-/* "Mi biblioteca" se guarda por número de lista: cada alumno tiene la suya */
+/* "Mi biblioteca" se guarda por matricula: cada alumno tiene la suya */
 const claveBiblioteca = () => "cecyteo_biblioteca_" + numeroActual;
 
 /* "Vistos recientemente": los últimos libros abiertos, por número de lista (máx. 12) */
