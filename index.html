@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Biblioteca Virtual CECYTEO — catálogo digital de Programación y Matemáticas">
+<title>CECYTEO · Biblioteca Virtual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1220; --bg2:#0f1b2d; --panel:#132339; --panel2:#17293f;
+  --line:#223b57; --line-soft:#1a2f47; --txt:#e8f1fb; --muted:#8ea7c4; --muted2:#5f7897;
+  --cyan:#33d6f5; --cyan2:#12b8db; --cyan-dim:rgba(51,214,245,.12); --star:#f4b942;
+  --inset:#0e1d30; --hover:#1b3148; --headbg:rgba(15,27,45,.92); --on-cyan:#052733;
+  --ok:#37d39a; --danger:#ff7b7b;
+  --radius:12px; --radius-lg:16px;
+  --shadow-sm:0 6px 16px rgba(0,0,0,.28);
+  --shadow-md:0 18px 40px rgba(2,8,18,.5);
+  --ease:cubic-bezier(.22,.8,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Inter",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.brand b,.card h2,nav button,.b1,.b2,.btn{font-family:"Space Grotesk","Inter",sans-serif}
+button,input,select{font-family:inherit}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline;color:#7ee8fa}
+::selection{background:var(--cyan);color:var(--on-cyan)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:#2c4a6c}
+button,a,.filter,.book{outline-offset:2px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+/* ============ LOGIN ============ */
+#login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.brand{position:absolute;top:20px;left:26px;display:flex;align-items:center;gap:11px;z-index:2}
+.brand .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#2b7fd6);display:grid;place-items:center;font-weight:700;color:var(--on-cyan);box-shadow:0 6px 16px rgba(51,214,245,.25)}
+.brand b{font-size:18px;letter-spacing:.4px;font-weight:700}
+.brand small{display:block;color:var(--muted);font-size:11px;font-family:"Inter",sans-serif;letter-spacing:.2px}
+.hero{position:relative;background:radial-gradient(circle at 15% 10%,#0e2036,transparent 45%),radial-gradient(circle at 85% 90%,#0d2233,transparent 45%),linear-gradient(160deg,#0b1626,#0a1220);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 40px;text-align:center;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:42px 42px;opacity:.18;mask-image:radial-gradient(circle at 50% 40%,#000,transparent 70%)}
+.hero h1,.hero p,.hero-art{position:relative}
+.hero h1{font-size:27px;line-height:1.35;margin-bottom:8px;font-weight:700;letter-spacing:-.2px}
+.hero p{color:var(--muted);margin-bottom:30px;font-size:14.5px}
+.hero-art{width:100%;max-width:430px;aspect-ratio:1/1;border-radius:20px;border:1px solid var(--line);
+  background:radial-gradient(circle at 30% 25%,#14405c,transparent 55%),radial-gradient(circle at 75% 70%,#123a52,transparent 55%),#0c1a2b;
+  display:flex;align-items:center;justify-content:center;padding:28px;font-size:38px;
+  box-shadow:var(--shadow-md),inset 0 0 0 1px rgba(51,214,245,.05);animation:heroIn .7s var(--ease)}
+.hero-art span{opacity:.85;transition:transform .25s var(--ease),opacity .25s var(--ease)}
+.hero-art span:hover{opacity:1;transform:translateY(-3px) scale(1.08)}
+.logo-cecyte{display:block;margin:0 auto;width:86%;max-width:360px;height:auto;background:#fff;border-radius:22px;padding:14px;box-shadow:0 0 26px rgba(51,214,245,.25)}
+.hero-art .big{width:100%;display:flex;justify-content:center;font-size:29px;font-weight:700;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 26px rgba(51,214,245,.35);animation:glowPulse 3.2s ease-in-out infinite}
+@keyframes heroIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 18px rgba(51,214,245,.25)}50%{text-shadow:0 0 32px rgba(51,214,245,.55)}}
+.loginside{background:var(--bg2);display:grid;place-items:center;padding:40px}
+.card{width:100%;max-width:368px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 28px;box-shadow:var(--shadow-md);animation:cardIn .5s var(--ease)}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card h2{text-align:center;letter-spacing:1.6px;font-size:19px;margin-bottom:24px;font-weight:600}
+.field{display:flex;align-items:center;gap:10px;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:13px;transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.field:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.field input{flex:1;background:none;border:0;outline:0;color:var(--txt);font-size:14px}
+.field input::placeholder{color:var(--muted2)}
+.field .ico{color:var(--muted);font-size:14px}
+.eye{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;transition:color .15s}
+.eye:hover{color:var(--cyan)}
+.row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:6px 0 20px}
+.row input[type=checkbox]{accent-color:var(--cyan);width:14px;height:14px}
+.btn{width:100%;padding:13px;border:0;border-radius:10px;background:var(--cyan);color:var(--on-cyan);font-weight:700;letter-spacing:.8px;font-size:13.5px;cursor:pointer;transition:background .18s var(--ease),transform .12s var(--ease),box-shadow .18s var(--ease);box-shadow:0 10px 24px rgba(51,214,245,.18)}
+.btn:hover{background:var(--cyan2);box-shadow:0 12px 28px rgba(51,214,245,.28)}
+.btn:active{transform:translateY(1px) scale(.997)}
+.links{text-align:center;font-size:13px;color:var(--muted);margin-top:16px;line-height:2}
+.sep{display:flex;align-items:center;gap:10px;color:var(--muted2);font-size:11.5px;margin:18px 0 14px;letter-spacing:.3px}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.social{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.social button{padding:10px;border:1px solid var(--line);background:var(--inset);border-radius:9px;color:var(--txt);cursor:pointer;font-size:15px;transition:border-color .15s,transform .12s var(--ease),background .15s}
+.social button:hover{border-color:var(--cyan);background:#122336;transform:translateY(-1px)}
+.error{color:var(--danger);font-size:12.5px;text-align:center;margin-bottom:12px;display:none;background:rgba(255,123,123,.08);border:1px solid rgba(255,123,123,.25);border-radius:8px;padding:8px 10px}
+.foot{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;padding:11px 24px;font-size:12px;color:var(--muted2);background:#08101c;border-top:1px solid var(--line)}
+
+/* ============ APP ============ */
+#app{display:none}
+header{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:15px;padding:11px 20px;background:var(--headbg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav{display:flex;gap:5px;flex:1;background:var(--inset);border:1px solid var(--line);padding:4px;border-radius:11px;width:fit-content}
+nav button{background:none;border:0;color:var(--muted);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:600;transition:background .18s var(--ease),color .18s var(--ease)}
+nav button:hover{background:var(--hover);color:var(--txt)}
+nav button.on{background:var(--cyan);color:var(--on-cyan);box-shadow:0 4px 12px rgba(51,214,245,.25)}
+.search{display:flex;align-items:center;gap:8px;background:var(--inset);border:1px solid var(--line);border-radius:20px;padding:8px 14px;width:260px;transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.search:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.search input{background:none;border:0;outline:0;color:var(--txt);flex:1;font-size:13px}
+.search input::placeholder{color:var(--muted2)}
+.user{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}
+.avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#2b7fd6);display:grid;place-items:center;color:var(--on-cyan);font-weight:700;box-shadow:0 4px 12px rgba(51,214,245,.25)}
+.logout{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:600;transition:border-color .15s,color .15s,background .15s}
+.logout:hover{border-color:var(--cyan);color:var(--cyan);background:var(--cyan-dim)}
+.btn-toggle-aside{display:none;background:var(--hover);border:1px solid var(--line);color:var(--txt);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 55px)}
+aside{background:var(--bg2);border-right:1px solid var(--line);padding:22px 16px}
+aside h4{font-size:11px;text-transform:uppercase;letter-spacing:1.6px;color:var(--muted2);margin:20px 0 9px;font-weight:700}
+aside h4:first-child{margin-top:0}
+.filter{display:block;width:100%;text-align:left;background:none;border:0;color:var(--txt);padding:8px 11px;border-radius:8px;cursor:pointer;font-size:13.5px;transition:background .15s var(--ease),color .15s var(--ease);margin-bottom:2px}
+.filter:hover{background:var(--hover)}
+.filter.on{background:var(--cyan-dim);color:var(--cyan);font-weight:600;box-shadow:inset 0 0 0 1px rgba(51,214,245,.25)}
+main{padding:26px 28px 54px}
+main h2{font-size:22px;font-weight:700;letter-spacing:-.2px}
+main .sub{color:var(--muted);font-size:13.5px;margin:6px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px}
+.book{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:15px;display:flex;flex-direction:column;transition:border-color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
+.book:hover{border-color:var(--cyan);transform:translateY(-4px);box-shadow:var(--shadow-sm)}
+.cover{height:132px;border-radius:9px;display:grid;place-items:center;text-align:center;padding:10px;font-weight:700;font-size:15px;color:#fff;margin-bottom:12px;line-height:1.3;font-family:"Space Grotesk",sans-serif;box-shadow:inset 0 -18px 30px rgba(0,0,0,.25)}
+.book h3{font-size:14.5px;margin-bottom:3px;font-weight:600;line-height:1.3}
+.book .by{color:var(--muted);font-size:12px}
+.stars{color:var(--star);font-size:12.5px;margin:6px 0 10px;letter-spacing:1px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.tag{font-size:10.5px;background:var(--inset);border:1px solid var(--line);color:var(--muted);padding:3px 8px;border-radius:20px;font-weight:500}
+.book p{font-size:12px;color:var(--muted);margin-top:auto;padding-top:10px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.b1,.b2{width:100%;padding:9px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;margin-bottom:7px;text-align:center;display:block;transition:background .18s var(--ease),transform .12s var(--ease),color .18s var(--ease),border-color .18s var(--ease)}
+.b1{background:var(--cyan);border:0;color:var(--on-cyan)}
+.b1:hover{background:var(--cyan2);transform:translateY(-1px)}
+.b2{background:none;border:1px solid var(--cyan);color:var(--cyan)}
+.b2:hover{background:var(--cyan-dim)}
+.b2.saved{background:var(--cyan);color:var(--on-cyan);border-color:var(--cyan)}
+.empty{color:var(--muted);padding:46px 0;text-align:center;font-size:14px}
+
+/* MODAL LECTOR Y REGISTRO */
+.modal{position:fixed;inset:0;background:rgba(4,10,18,.82);backdrop-filter:blur(3px);display:none;place-items:center;z-index:60;padding:20px}
+.modal.open{display:grid;animation:modalIn .18s var(--ease)}
+@keyframes modalIn{from{opacity:0}to{opacity:1}}
+.reader{width:100%;max-width:860px;height:85vh;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;display:flex;flex-direction:column;box-shadow:var(--shadow-md)}
+.reader h3{margin-bottom:4px;font-size:17px;font-weight:700}
+.reader .by{color:var(--muted);font-size:13px;margin-bottom:12px}
+.reader iframe{width:100%;flex:1;border:1px solid var(--line);border-radius:9px;background:#fff}
+.close{float:right;background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;font-weight:600;transition:border-color .15s,color .15s}
+.close:hover{border-color:var(--danger);color:var(--danger)}
+
+.limpiar{width:auto;display:inline-block;margin:-8px 0 16px;padding:7px 12px;border:1px solid var(--line)}
+
+/* ---- pantalla de acceso con el mismo diseño ---- */
+#login{--bg:#f6faee;--bg2:#eef5e0;--panel:#ffffff;--line:#d5e5c0;--line-soft:#e5efd6;--txt:#103a22;--muted:#4c6a54;--muted2:#7b9582;
+  --cyan:#1b8a3b;--cyan2:#146f2d;--cyan-dim:rgba(27,138,59,.14);--inset:#ffffff;--on-cyan:#ffffff;--shadow-md:0 16px 38px rgba(16,58,34,.22);
+  position:relative;display:grid;place-items:center;grid-template-columns:1fr;padding:64px 18px 72px;color:var(--txt);
+  background:linear-gradient(115deg,#f3f7b0 0%,#dfef9c 55%,#cfe88f 100%)}
+#login .hero,#login .brand{display:none}
+#login .greca{position:absolute;top:0;left:0;right:0;margin:0}
+#login::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-linear-gradient(90deg,#1b8a3b 0 22px,#f6c026 22px 44px,#f28c28 44px 66px)}
+#login .loginside{background:none;padding:0;display:block;width:100%;max-width:420px}
+#login .card{max-width:420px;border:0;border-radius:24px;padding:30px 28px 26px;text-align:left}
+#login .card h2{letter-spacing:-.3px;font-size:24px;line-height:1.15;color:#0d4a22;text-align:center;margin-bottom:8px}
+#login .lema{text-align:center;color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:20px}
+.logo-card{display:block;width:104px;height:auto;margin:0 auto 12px}
+#login .btn{letter-spacing:.2px;font-size:15px;border-radius:12px}
+#login .btn:hover{box-shadow:0 10px 24px rgba(27,138,59,.3)}
+#login .foot{position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:center;background:none;border:0;padding:0;color:#2f6a3a;font-size:13px}
+
+/* ============ TEMA CECyTE OAXACA (verde y amarillo) ============ */
+body.en-app{
+  --bg:#f6faee; --bg2:#eef5e0; --panel:#ffffff; --panel2:#f6faee;
+  --line:#d5e5c0; --line-soft:#e5efd6; --txt:#103a22; --muted:#4c6a54; --muted2:#7b9582;
+  --cyan:#1b8a3b; --cyan2:#146f2d; --cyan-dim:rgba(27,138,59,.12); --star:#f2a900;
+  --inset:#ffffff; --hover:#e5f1d3; --headbg:#ffffff; --on-cyan:#ffffff;
+  --shadow-sm:0 6px 16px rgba(16,58,34,.12); --shadow-md:0 14px 34px rgba(16,58,34,.16);
+}
+body.en-app a:hover{color:var(--cyan2)}
+body.en-app header{margin:10px 14px 0;top:8px;border:0;border-radius:18px;box-shadow:var(--shadow-md)}
+.marca{display:flex;align-items:center;gap:10px}
+.marca img{height:46px;width:auto;display:block}
+.marca b{font-size:22px;color:var(--cyan);font-weight:700;letter-spacing:-.3px;font-family:"Space Grotesk","Inter",sans-serif}
+body.en-app nav{background:none;border:0;padding:0;gap:4px;justify-content:center}
+body.en-app nav button{color:var(--txt)}
+body.en-app nav button:hover{background:var(--hover)}
+body.en-app nav button.on{background:#d7ec8f;color:#0d4a22;box-shadow:none}
+body.en-app .user{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 5px}
+body.en-app .avatar{background:linear-gradient(135deg,#f6c026,#f28c28);color:#4a2b00;box-shadow:none}
+body.en-app .layout{min-height:calc(100vh - 80px)}
+
+#landing{display:none}
+.greca{height:24px;margin-top:-6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Crect width='48' height='24' fill='%23f6c026'/%3E%3Cpath d='M4 20V4h16v11h-9V9H8v11zM28 20V4h16v11h-9V9h-3v11z' fill='none' stroke='%23156b2e' stroke-width='3'/%3E%3Crect x='22' y='10' width='4' height='4' fill='%23e8651a'/%3E%3C/svg%3E") repeat-x}
+.portada{position:relative;display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:center;padding:34px 7vw 44px;background:linear-gradient(115deg,#f3f7b0 0%,#dfef9c 55%,#cfe88f 100%);overflow:hidden}
+.portada::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-linear-gradient(90deg,#1b8a3b 0 22px,#f6c026 22px 44px,#f28c28 44px 66px)}
+.portada .saludo{color:#2f6a3a;font-weight:600;margin-bottom:6px;font-size:15px}
+.portada h1{font-size:clamp(28px,4vw,46px);line-height:1.08;color:#0d4a22;font-weight:700;letter-spacing:-.8px;margin-bottom:14px}
+.portada p{color:#14381f;font-size:15px;line-height:1.55;max-width:560px;margin-bottom:18px}
+.buscador-hero{display:flex;gap:8px;background:#fffdf3;border:1px solid #e3e8b8;border-radius:14px;padding:6px;max-width:560px;margin-bottom:14px;box-shadow:0 6px 16px rgba(16,58,34,.12)}
+.buscador-hero input{flex:1;min-width:0;border:0;outline:0;background:none;padding:10px 12px;font-size:15px;color:#103a22}
+.buscador-hero input::placeholder{color:#7b8f6a}
+.buscador-hero button{background:#1b8a3b;color:#fff;border:0;border-radius:10px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px}
+.buscador-hero button:hover{background:#146f2d}
+.acciones{display:flex;gap:10px;flex-wrap:wrap}
+.btn-verde{background:#1b8a3b;color:#fff;border:0;border-radius:12px;padding:13px 26px;font-weight:700;cursor:pointer;font-size:15px;font-family:"Space Grotesk",sans-serif}
+.btn-verde:hover{background:#146f2d}
+.btn-borde{background:transparent;border:2px solid #1b8a3b;color:#0d4a22;border-radius:12px;padding:11px 24px;font-weight:700;cursor:pointer;font-size:15px;font-family:"Space Grotesk",sans-serif}
+.btn-borde:hover{background:rgba(27,138,59,.1)}
+.portada-logo{display:grid;place-items:center}
+.portada-logo img{width:min(100%,320px);height:auto;background:#fff;border-radius:28px;padding:18px;box-shadow:0 14px 34px rgba(16,58,34,.2)}
+
+.seccion{padding:26px 7vw 8px}
+.seccion h2{font-size:30px;color:var(--txt);letter-spacing:-.4px}
+.seccion .sub{color:var(--muted);margin:2px 0 16px;font-size:14.5px}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+.cat{border:0;border-radius:16px;padding:22px 12px;color:#fff;font-weight:700;font-size:17px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow-sm);transition:transform .15s var(--ease);font-family:"Space Grotesk",sans-serif}
+.cat:hover{transform:translateY(-3px)}
+.cat .ic{font-size:40px;line-height:1}
+.cat small{font-weight:500;opacity:.92;font-size:12.5px;font-family:"Inter",sans-serif}
+.destacados{background:linear-gradient(180deg,#cfe8b5,#e3f2cf);border-radius:60px 60px 0 0;margin-top:26px;padding-top:30px;padding-bottom:26px}
+.destacados h2{color:#0d4a22}
+.destacados .sub{color:#2f6a3a}
+.cab{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.vertodo{background:none;border:0;color:#146f2d;font-weight:700;font-size:15px;cursor:pointer;margin-bottom:16px}
+.vertodo:hover{text-decoration:underline}
+.destacados .grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.barra-stats{display:flex;justify-content:space-around;flex-wrap:wrap;gap:12px;margin-top:24px;background:#1b8a3b;color:#fff;border-radius:16px;padding:14px 20px;font-size:15px;box-shadow:0 8px 20px rgba(16,58,34,.25)}
+.barra-stats b{font-size:17px}
+.pie{text-align:center;color:var(--muted);font-size:13px;padding:18px 14px 22px}
+body.en-app .pie{background:var(--bg2)}
+
+.barra-busca{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.buscador{display:flex;align-items:center;gap:8px;background:var(--inset);border:1px solid var(--line);border-radius:14px;padding:9px 14px;flex:1;min-width:220px;max-width:520px;transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+.buscador:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.buscador input{background:none;border:0;outline:0;color:var(--txt);flex:1;font-size:14px}
+.buscador input::placeholder{color:var(--muted2)}
+.chip{display:inline-flex;align-items:center;background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.chip:hover{background:var(--cyan);color:var(--on-cyan)}
+
+.filter.sin{opacity:.42}
+#vacio .chip{margin-left:8px}
+.cuenta{opacity:.55;font-size:11px;margin-left:6px}
+.sugerido{grid-column:1/-1;color:var(--muted);font-size:14px;margin:0 0 4px}
+
+/* PERSONALIZAR (color de fondo) */
+.temas{display:flex;flex-wrap:wrap;gap:8px;padding:2px 4px 10px}
+.tema{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;transition:transform .12s var(--ease),border-color .15s}
+.tema:hover{transform:scale(1.12)}
+.tema.on{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.colorlibre{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--txt);padding:6px 11px}
+.colorlibre input{width:38px;height:26px;border:0;background:none;padding:0;cursor:pointer}
+.resetbtn{display:block;width:100%;text-align:left;background:none;border:0;color:var(--muted);padding:8px 11px;border-radius:8px;cursor:pointer;font-size:13px}
+.resetbtn:hover{background:var(--hover);color:var(--txt)}
+
+.acciones-pdf{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.btn-pdf{background:var(--cyan);color:var(--on-cyan);padding:12px 18px;border-radius:12px;font-weight:700;text-decoration:none;font-size:14px;text-align:center;border:2px solid var(--cyan)}
+.btn-pdf.sec{background:transparent;color:var(--cyan)}
+.nota-cel{color:var(--muted);font-size:14px;margin-bottom:14px;line-height:1.55}
+.cerrar-aside{display:none}
+html{-webkit-text-size-adjust:100%}
+button,a{-webkit-tap-highlight-color:transparent}
+.book{content-visibility:auto;contain-intrinsic-size:auto 340px}
+
+@media(max-width:860px){
+  #login{grid-template-columns:1fr}.hero{display:none}
+  .layout{grid-template-columns:1fr}
+  aside{display:none}
+  aside.active{display:block;position:fixed;top:0;left:0;bottom:0;z-index:70;width:84%;max-width:330px;box-shadow:6px 0 24px rgba(0,0,0,.45);overflow-y:auto;padding-top:14px}
+  .cerrar-aside{display:block;width:100%;margin-bottom:10px;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--hover);color:var(--txt);font-weight:700;font-size:14px;cursor:pointer}
+  .portada{grid-template-columns:1fr;padding:26px 6vw 38px}
+  .portada-logo img{width:150px}
+  .marca b{font-size:18px}
+  .seccion{padding:22px 5vw 8px}
+  .btn-toggle-aside{display:block}
+  body.vista-inicio .btn-toggle-aside{display:none}
+  body.en-app header{margin:8px 8px 0;padding:9px 12px;gap:10px}
+  header{flex-wrap:wrap;backdrop-filter:none}
+  .marca{flex:1;min-width:0}
+  .marca img{height:38px}
+  nav{order:3;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  nav button{white-space:nowrap;padding:9px 12px}
+  #nombreUser{display:none}
+  main{padding:18px 14px 40px}
+  .modal{padding:8px;backdrop-filter:none}
+  .reader{height:92vh;height:92dvh;padding:14px}
+  .filter{padding:10px 12px}
+  input{font-size:16px}
+}
+@media(max-width:600px){
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .book{padding:11px}
+  .cover{height:96px;font-size:13px}
+  .cats{grid-template-columns:repeat(2,1fr);gap:12px}
+  .cat{padding:16px 8px;font-size:15px}
+  .cat .ic{font-size:32px}
+  .destacados{border-radius:34px 34px 0 0}
+  .destacados .grid{grid-template-columns:1fr}
+  .seccion h2{font-size:24px}
+  .buscador-hero{flex-direction:column}
+  .buscador-hero button{width:100%}
+  .acciones{flex-direction:column}
+  .btn-verde,.btn-borde{width:100%}
+  .barra-stats{flex-direction:column;align-items:flex-start}
+  #login .card{padding:24px 20px 22px}
+  #login{padding:56px 14px 70px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN / REGISTRO ================= -->
+<section id="login">
+  <div class="greca"></div>
+  <div class="brand"><div class="logo">C</div><div><b>CECYTEO</b><small>Biblioteca Virtual</small></div></div>
+
+  <div class="hero">
+    <h1>BIENVENIDOS A LA BIBLIOTECA VIRTUAL</h1>
+    <p>CECYTEO · Tu portal a la tecnología</p>
+    <div class="hero-art">
+      <span class="big">
+        <img class="logo-cecyte" id="logoLogin" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAMAAAD6TlWYAAAC+lBMVEVHcEyqlmfyZSIuoEc8pkbyZSLyZSLyZSKnqaunqasXmUh2vEERl0jyZSIJlEgLlkjxZSLxZSJ7vUGmqaunqaumqaumqasbmkcNlkgIlUgHlEgGlEgGk0gCk0kHlEinqaunqaunqaunqaymqaunqaunqaunqaunqaynqaunqaynqaymqaumqaunqaunqaunqaynqaunqaumqaunqaumqaumqaunqawGk0gQlkgHk0gBk0kBk0kAj0oAjkoAkEoAkUoAk0oAlEkAj0kAlUkAlkkAl0kAmEkAlEgBmkkEm0kHm0gLnEgOnUcSnkgVnkgYn0gboEgeoEghoUgkoUgnokgqo0guo0gxpEc0pEcAkUk2pUY5pUY9pkdAqEdCqEdEqUZGqUZJqkVLq0ZOrEZRrUVUrkVVrkRXrkRasEVcsUVesUVhskRjs0NltERntURptURqtkNst0Nut0JvuENyuUJwuENzukJ1u0F2u0J3vEF5vEF7vkB+v0GAwECCwUCDwT+FwUCGwkAAkEmIwz+JxD+LxT6Mxj8Ak0mHwz+FwkCHwz+JxD+KxT+Jwz+KxD+LxT+CwUCJxD8CmEkgnkeAwEAhn0c9p0ZVrkVuuEJptkN3vEFtt0J3vEEdnEcPnUhrtkOWpDljtEMum0c8oEhHo0lQqEpZrEslmkdir0xns01rtU1wt010uk55vE59v0+Dwk+HxVBntkTiciZ9qUCycixcgzuNeTIniUOrljPecSbBiS7xZSLoaSTPdilPrEU6pkZcsURWr0VyukJbsERAqEZOqkVWr0RNrEUypEfxZSL0ZCFns0M+p0ZNrEXyZSLvZSLyZSKmqavxZSKFwz96vUGGwz+AwECFwj97vkFntUMAkkkAkknxZSLxZSLyZSLwZiLxZSLwZSLyZSLxZSLyZSLyZSLxZSLyZSLyZSLyZSLyZSLwZSLyZSLyZSLyZSLxZSLyZSLxZSLyZSLyZCHyZSLyZSLyZSLyZSLyZSKkq6OmqavyZSLyZSLxZSIC85o4AAAA/nRSTlMAAQ8IBAwT0hYeDw0WGTwgJJ8WJ24vYC8oSlhodrmeNz62/8Lfq4KVytj75tHy7vdUjKPqeUxFrIaSyOD////////8//////////////////////////////D/////////////////////////////////////////////////////9v//////nP+y1ezF9vx64fjs9c3bzca34dbv3fDs//b///////z/////////////uv/+/vr//f//Zv//7/DgPU5ZSrWNa7pp/6Kjem0JYp2wWDOMaEEoHufVlXTCOvNCXR/g2XwsV+fsSzXwqY2Dzfn//rXH/7sGDQUIA/uCP7gAACyoSURBVHja7NCFjcMwAIVhF4QWZt4yhMxSJsoIAcM2V2YUHPV9Zot/AgAAAPDTAAAAAAAAAGjLmOFcSqnUauPcMCHytNW2dk2Ieh3yEDQ8vmW5VKuYbJOydj6iCHlHr5XxY+uUq5KtXXXsk0tArYlfoOJ41TFv6+ayIjS5Wt4Rr8YJtfpZVdSlpwSOIs0Xr1sulsqItvY9Ajv9mk3fJU2uXdQhsNGIyXvGo8l4Uoi2vNOw31hbevo5gUNajIZvGw0Llt5sWH5xZxbKbWNRGK7WHgiMM7OUGF/DHGbmMjOHOYUwM+PsI+wLlBmGUvOLLBWu7HOlK12TtCTlWyjT1/Of80vZ7+ra2dqY8H7C33r4F+HKgBz6B1amPT7qqCy0d3R1dff09u1sI4mH7uZoNFG+zrvTL4u+vr6djQW/sN28bmvv7GAN9vb19+/Meg7XumT0VlMm5fDzs61emSCJWxM+DRnhNmQQhhApHEBRPwgcHofGfFfQbMxiRF59293y6drxkldpv5Uz2MsaHBhkHR6WOTTlu93ufKddpxEa/LTRIZ+uje+Jo7Td0oqGsKODN4huDqxL9WNzuV0ut9t13KoXKGT8G+3y6XxGbNTNuy2tMIQ9bIwjBu/fX5ld8H8+BALDII1DZoFCJrDZKpv298QheX/nbktLq3ARDiCDDyYfLk6ofgztLjfHkFWnFRhskc124AjHx9tgUBTj+/cfPByem/V+r3KBPCjI9iyyEL6/I5dfn/N/Ec9v375zB2LMGuzhFiFrcHh+esGv4oNiyUYQCkPGVNLg7VsyITL89JdbSCEYJGI8GInx8Mj8oke9Ci2EvrDLfLOO4Ybn+/c35XHrSYA/R/u3IgZbqD5zLxxj9F4HFKpTIAnrMWhKJWbwhkz4DAee3EQjiWLcQvcZiPHIKKtQlQKtORjeYr45k/v29PfX5PGKf9O9fgONJGuQ6jMQ47DB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" alt="Logo CECyTEO" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+        <span class="logo-texto" style="display:none">CECyTEO</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="loginside">
+    <form class="card" id="formLogin" autocomplete="off">
+      <img class="logo-card" id="logoCard" alt="Logo CECyTE">
+      <h2 id="formTitle">Biblioteca Virtual<br>CECyTE Oaxaca</h2>
+      <p class="lema">Aprende, explora y crece.<br>Escribe tu número de lista para entrar.</p>
+      <div class="error" id="err">Escribe tu número de lista y tu nombre para continuar.</div>
+      <div class="field"><input id="numero" type="text" inputmode="numeric" placeholder="Número de lista" autofocus></div>
+      <div class="field"><span class="ico">👤</span><input id="usuario" type="text" maxlength="40" placeholder="Tu nombre (el que quieras)"></div>
+      <label class="row"><input type="checkbox" id="recordar" checked> Mantener sesión iniciada</label>
+      <button class="btn" type="submit" id="btnSubmit">Entrar</button>
+      <div class="links">¿No tienes tu número? Pídeselo a tu profesor.</div>
+    </form>
+  </div>
+
+  <div class="foot"><span>CECyTE Oaxaca · Biblioteca Virtual escolar</span></div>
+</section>
+
+<!-- ================= APP ================= -->
+<section id="app">
+  <header>
+    <button class="btn-toggle-aside" id="toggleAside">☰ Filtros</button>
+    <div class="marca"><img id="logoHeader" alt="Logo CECyTE"><b>CECyTE Oaxaca</b></div>
+    <nav>
+      <button class="on" data-view="inicio">Inicio</button>
+      <button data-view="catalogo">Catálogo</button>
+      <button data-view="recientes">Vistos recientemente</button>
+      <button data-view="biblioteca">Mi biblioteca</button>
+    </nav>
+    <div class="user"><div class="avatar" id="inicial">A</div><span id="nombreUser">Alumno</span>
+      <button class="logout" id="salir">Salir</button></div>
+  </header>
+
+  <!-- ===== INICIO (portada) ===== -->
+  <section id="landing">
+    <div class="greca"></div>
+    <div class="portada">
+      <div class="portada-txt">
+        <div class="saludo" id="saludo"></div>
+        <h1>Biblioteca Virtual CECyTE Oaxaca<br>Aprende, explora y crece</h1>
+        <p>Tu biblioteca digital para aprender, explorar conocimientos y fortalecer tu futuro tecnológico y científico. Consulta <b id="lanTotal">0</b> libros, guías y cuadernillos de 1.° a 6.° semestre desde cualquier lugar.</p>
+        <form class="buscador-hero" id="formHero" autocomplete="off">
+          <input id="buscarHero" type="text" placeholder="Busca libros, guías, temas...">
+          <button type="submit">🔍 Buscar</button>
+        </form>
+        <div class="acciones">
+          <button class="btn-verde" id="btnExplora" type="button">➜ Explora ahora</button>
+          <button class="btn-borde" id="btnMiBib" type="button">🔖 Mi biblioteca</button>
+        </div>
+      </div>
+      <div class="portada-logo"><img id="logoPortada" alt="Logo CECyTE"></div>
+    </div>
+
+    <div class="seccion">
+      <h2>Categorías populares</h2>
+      <p class="sub">Encuentra libros por tema y área de estudio</p>
+      <div class="cats" id="cats"></div>
+    </div>
+
+    <div class="seccion destacados">
+      <div class="cab">
+        <div><h2>Recursos destacados</h2><p class="sub">Para empezar a estudiar</p></div>
+        <button class="vertodo" id="verTodo" type="button">Ver todo →</button>
+      </div>
+      <div class="grid" id="destacados"></div>
+      <div class="barra-stats">
+        <span>📖 <b id="statLibros">0</b> libros digitales</span>
+        <span>🗂️ <b id="statCats">0</b> categorías</span>
+        <span>🎓 6 semestres</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout" id="layoutApp">
+    <aside id="menuAside">
+      <button class="cerrar-aside" id="cerrarAside" type="button">✕ Cerrar filtros</button>
+      <h4>Semestres</h4>
+      <div id="filtrosSem"></div>
+      <h4>Formato</h4>
+      <button class="filter on" data-fmt="todos">Todos</button>
+      <button class="filter" data-fmt="Libro de texto">Libros de texto</button>
+      <button class="filter" data-fmt="Ejercicios">Ejercicios</button>
+      <button class="filter" data-fmt="Guía">Guías</button>
+      <h4>Nivel</h4>
+      <button class="filter on" data-niv="todos">Todos</button>
+      <button class="filter" data-niv="Básico">Básico</button>
+      <button class="filter" data-niv="Intermedio">Intermedio</button>
+      <button class="filter" data-niv="Avanzado">Avanzado</button>
+      <h4>Personalizar</h4>
+      <div class="temas" id="temas"></div>
+      <label class="colorlibre">Color de fondo <input type="color" id="colorFondo" value="#0a1220"></label>
+      <button class="resetbtn" id="resetColor" type="button">Restablecer color</button>
+    </aside>
+
+    <main>
+      <h2 id="titulo">Bienvenido, Alumno</h2>
+      <p class="sub" id="subtitulo">Catálogo digital de programación · 1° a 6° semestre</p>
+      <div class="barra-busca">
+        <div class="buscador"><span>🔍</span><input id="buscar" type="text" placeholder="Buscar libros, autores, temas..."></div>
+        <button class="chip" id="chipCat" type="button" style="display:none"></button>
+      </div>
+      <button class="resetbtn limpiar" id="limpiarRec" type="button" style="display:none">🗑 Borrar mi historial de vistos</button>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="vacio" style="display:none">No hay libros que coincidan con tu búsqueda.</p>
+
+    </main>
+  </div>
+
+  <footer class="pie">CECyTE Oaxaca · Biblioteca Virtual escolar · Material de consulta para los alumnos</footer>
+</section>
+
+<!-- MODAL PARA LEER Y DESCARGAR LIBROS -->
+<div class="modal" id="modal">
+  <div class="reader">
+    <div>
+      <button class="close" id="cerrar">✕ Cerrar</button>
+      <h3 id="rTitulo"></h3>
+      <div class="by" id="rAutor"></div>
+    </div>
+    <div id="rCuerpo" style="height:100%; display:flex; flex-direction:column; margin-top:10px;"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- CATÁLOGO DE LIBROS Y ARCHIVOS DETECTADOS DE TU CARPETA ---------- */
+const LIBROS = [
+  {t:"Álgebra - Cuaderno de Trabajo",a:"CECyTE Guanajuato",s:1,f:"Ejercicios",n:"Básico",r:5,c:"#1f6f8b",d:"Cuaderno de trabajo oficial para el aprendizaje del álgebra.",pdf:"CUADERNO-DE-TRABAJO-DE-ALGEBRA.pdf"},
+  {t:"Matemáticas II",a:"Misael Garrido Méndez",s:2,f:"Libro de texto",n:"Básico",r:5,c:"#2b6cb0",d:"Geometría, trigonometría, estadística y probabilidad para segundo semestre.",pdf:"YD78drLFT6-Matematicas-II.pdf"},
+  {t:"Matemáticas Aplicadas (2do Parcial)",a:"CECyTEO",s:2,f:"Guía",n:"Intermedio",r:5,c:"#285e61",d:"Material didáctico y ejercicios para el segundo parcial de matemáticas aplicadas.",pdf:"Matematicas_Aplicadas_2do_parcial.pdf"},
+  {t:"Temas Selectos de Matemáticas II",a:"SEP",s:5,f:"Libro de texto",n:"Avanzado",r:5,c:"#2c5282",d:"Pensamiento geométrico avanzado y formación propedéutica.",pdf:"Temas Selectos de Matematicas 2.pdf"},
+
+  /* ---- Nuevos libros (carpeta: proyectohipolito/nuevos libros) ---- */
+  {t:"Matemáticas IV - Guía Pedagógica",a:"Dirección General del Bachillerato",s:4,f:"Guía",n:"Avanzado",r:4,c:"#3182ce",d:"Guía de 89 páginas de cuarto semestre: relaciones y funciones, funciones polinomiales y más bloques para desarrollar los aprendizajes esperados.",pdf:"nuevos libros/Matematicas-IV.pdf"},
+  {t:"Programación - Plan de Estudios (v1)",a:"CECyTE EMSAD Tlaxcala",s:1,f:"Guía",n:"Básico",r:4,c:"#dd6b20",d:"Justificación de la carrera, perfil de ingreso y egreso, y mapa curricular de la carrera de Programación.",pdf:"nuevos libros/Programacion_1.pdf"},
+  {t:"Programación - Plan de Estudios (v2)",a:"CECyTE EMSAD Tlaxcala",s:1,f:"Guía",n:"Básico",r:4,c:"#dd6b20",d:"Segunda versión del mapa curricular con los seis semestres y módulos de la carrera de Programación.",pdf:"nuevos libros/Programacion_1_1.pdf"},
+  {t:"Programación - Módulo III: Eventos en JavaScript",a:"CECyTE Campeche",s:4,f:"Ejercicios",n:"Intermedio",r:5,c:"#38a169",d:"Cuadernillo de trabajo del Módulo III Submódulo II: estructuras de control, bucles, funciones, objetos y manejo de eventos en JavaScript.",pdf:"nuevos libros/PROGRAMACION_M3_S2_2P.pdf"},
+  {t:"Programming Languages: Application and Interpretation",a:"Shriram Krishnamurthi",s:6,f:"Libro de texto",n:"Avanzado",r:5,c:"#5a3e85",d:"Texto avanzado sobre diseño, semántica e implementación de lenguajes de programación e intérpretes.",pdf:"nuevos libros/programming-languages-application-and-interpretation.pdf"},
+  {t:"Cálculo Integral",a:"SEP · Bachillerato Tecnológico",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#c53030",d:"Fundamentos de integrales indefinidas y definidas aplicados a problemas de ingeniería y ciencias.",pdf:"nuevos libros/Calculo_Integral.pdf"},
+  {t:"Codifica en Python",a:"Material de apoyo",s:2,f:"Libro de texto",n:"Básico",r:5,c:"#2f855a",d:"Introducción práctica a la programación con Python: sintaxis, estructuras de control y funciones.",pdf:"nuevos libros/codifica-en-python.pdf"},
+  {t:"Principios de Programación (DFD)",a:"Alcira Casas P.",s:1,f:"Guía",n:"Básico",r:4,c:"#2b6cb0",d:"Algoritmos, diagramas de flujo y estructuras básicas de programación usando el software DFD.",pdf:"nuevos libros/DFDCACS.pdf"},
+  {t:"Matemáticas Aplicadas - Programa de Estudios",a:"SEP",s:6,f:"Guía",n:"Avanzado",r:4,c:"#805ad5",d:"Programa oficial de la asignatura propedéutica Matemáticas Aplicadas del Bachillerato Tecnológico.",pdf:"nuevos libros/Matematicas_Aplicadas.pdf"},
+
+  /* ---- Segunda tanda de libros nuevos ---- */
+  {t:"Álgebra - Libro de Texto",a:"Material de apoyo",s:1,f:"Libro de texto",n:"Básico",r:4,c:"#2b6cb0",d:"Libro de texto de álgebra para primer semestre.",pdf:"nuevos libros/ALGEBRA -1 SEMESTRE.pdf"},
+  {t:"Matemáticas I - Libro de Texto",a:"Material de apoyo",s:1,f:"Libro de texto",n:"Básico",r:4,c:"#2b6cb0",d:"Libro de texto de matemáticas de primer semestre.",pdf:"nuevos libros/LIBRODETEXTOMATE1SEMESTRE.pdf"},
+  {t:"Algoritmos y Lógica de Programación",a:"Material de apoyo",s:1,f:"Libro de texto",n:"Básico",r:4,c:"#dd6b20",d:"Introducción a los algoritmos como base para aprender a programar en primer semestre.",pdf:"nuevos libros/algoritmos-1er semestre.pdf"},
+  {t:"Guía General de Fundamentos de Programación",a:"Mónica Alexandra Ramírez Velastegui",s:1,f:"Guía",n:"Intermedio",r:4,c:"#dd6b20",d:"Guía de 97 páginas con los fundamentos de la programación (primera edición, 2024).",pdf:"nuevos libros/Guia-general-de-fundamentos-de-programacion.pdf"},
+  {t:"Eloquent JavaScript (4.ª edición)",a:"Marijn Haverbeke",s:1,f:"Libro de texto",n:"Avanzado",r:4,c:"#d69e2e",d:"Libro para aprender JavaScript desde cero hasta programar en el navegador y en el servidor. Está en inglés (445 páginas).",pdf:"nuevos libros/primer semestre.pdf"},
+  {t:"Inglés I - Libro de Texto",a:"Material de apoyo",s:1,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Libro de inglés para primer semestre.",pdf:"nuevos libros/librosdeingles1ersemestre.pdf"},
+  {t:"Inglés I - Material Complementario",a:"Material de apoyo",s:1,f:"Ejercicios",n:"Básico",r:4,c:"#0d9488",d:"Material complementario de inglés para primer semestre.",pdf:"nuevos libros/librosdeingles1ersemestregirl.pdf"},
+  {t:"Matemáticas I - Guía Pedagógica",a:"Dirección General del Bachillerato",s:1,f:"Guía",n:"Básico",r:4,c:"#2b6cb0",d:"Guía de 151 páginas con 7 bloques: aritmética, razones y proporciones, sucesiones y series, probabilidad y estadística, álgebra y ecuaciones lineales y cuadráticas.",pdf:"nuevos libros/Guiadeestudios1ersemestre.pdf"},
+  {t:"Cuadernillo de Ejercicios - 1° Semestre",a:"Material de apoyo",s:1,f:"Ejercicios",n:"Básico",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS1SEMESTREcopia(2).pdf"},
+  {t:"Cuadernillo de Ejercicios - 2° Semestre",a:"Material de apoyo",s:2,f:"Ejercicios",n:"Básico",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS2SEMESTRE.pdf"},
+  {t:"Cuadernillo de Ejercicios - 3° Semestre",a:"Material de apoyo",s:3,f:"Ejercicios",n:"Básico",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS3SEMESTREcopia(3).pdf"},
+  {t:"Cuadernillo de Ejercicios - 4° Semestre",a:"Material de apoyo",s:4,f:"Ejercicios",n:"Intermedio",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS4SEMESTREcopia(4).pdf"},
+  {t:"Cuadernillo de Ejercicios - 5° Semestre",a:"Material de apoyo",s:5,f:"Ejercicios",n:"Intermedio",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS5SEMESTREcopia.pdf"},
+  {t:"Cuadernillo de Ejercicios - 6° Semestre",a:"Material de apoyo",s:6,f:"Ejercicios",n:"Avanzado",r:4,c:"#285e61",d:"Cuadernillo de 31 páginas con ejercicios y soluciones de matemáticas: aritmética y álgebra, geometría, funciones, límites, derivadas e integrales.",pdf:"nuevos libros/CUADERNILLODEEJERCICIOS6SEMESTRE.pdf"},
+  {t:"Matemáticas II - Guía Pedagógica",a:"Dirección General del Bachillerato",s:2,f:"Guía",n:"Básico",r:4,c:"#3182ce",d:"Guía de 107 páginas con 6 bloques: ángulos y triángulos, polígonos, circunferencia, razones y funciones trigonométricas y triángulos oblicuángulos.",pdf:"nuevos libros/Guiadeestudio2dosemestre.pdf"},
+  {t:"Aprendiendo Estadística",a:"Material de apoyo",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#c53030",d:"Material para aprender estadística en tercer semestre.",pdf:"nuevos libros/APRENDIENDOESTADISTICAVOLUMEN-3SEMESTRE.pdf"},
+  {t:"Bases de Datos",a:"Material de apoyo",s:3,f:"Libro de texto",n:"Intermedio",r:4,c:"#b7791f",d:"Material de apoyo sobre bases de datos para tercer semestre.",pdf:"nuevos libros/base de datos 3er semestre.pdf"},
+  {t:"Guía de Estudio - 3° Semestre",a:"Material de apoyo",s:3,f:"Guía",n:"Básico",r:4,c:"#4a5568",d:"Guía de estudio para repasar los contenidos del tercer semestre.",pdf:"nuevos libros/Guiadeestudio3ersemestre.pdf"},
+  {t:"Inglés IV",a:"Material de apoyo",s:4,f:"Libro de texto",n:"Intermedio",r:4,c:"#0d9488",d:"Libro de inglés para cuarto semestre.",pdf:"nuevos libros/ingles4tosemestre.pdf"},
+  {t:"Enseñanza Eficaz de la Resolución de Problemas",a:"María Mayela Calvo Ballestero",s:4,f:"Guía",n:"Intermedio",r:4,c:"#4a5568",d:"Artículo de la Revista Educación (Universidad de Costa Rica, 2008) sobre cómo enseñar a resolver problemas matemáticos, con el método de cuatro pasos de Polya.",pdf:"nuevos libros/Enseñanzaeficaz-4SEMESTRE.pdf"},
+  {t:"Java 2: Swing, Threads, JDBC y JSP/Servlets",a:"Jorge Sánchez",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#c05621",d:"Manual de Java 2 (2004) que incluye Swing, Threads, programación en red, JavaBeans, JDBC y JSP/Servlets. 320 páginas.",pdf:"nuevos libros/10.-Java2-5 semestre.pdf"},
+  {t:"Fundamentos de la Programación",a:"Material de apoyo",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#38a169",d:"Libro sobre los fundamentos de la programación para quinto semestre.",pdf:"nuevos libros/Fundamentos-de-la-programaci- 5semestre.pdf"},
+  {t:"Introducción a la Programación: Problemario en Java",a:"Javier Pino Herrera y otros",s:5,f:"Ejercicios",n:"Básico",r:4,c:"#2f855a",d:"Problemario de algoritmos paso a paso, con pruebas de escritorio y codificación en Java (Universidad Veracruzana, 2020).",pdf:"nuevos libros/Introducci-n-a-la-Programaci-quitosemstre.pdf"},
+  {t:"Introducción a la Matemática",a:"Material de apoyo",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#3182ce",d:"Introducción a la matemática para quinto semestre.",pdf:"nuevos libros/IntroducciónalaMatemática-5SEMESTRE.pdf"},
+  {t:"Probabilidad y Estadística (5° Semestre)",a:"Material de apoyo",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#c53030",d:"Libro de texto de probabilidad y estadística de quinto semestre.",pdf:"nuevos libros/LIBRODETEXTOPROBABILIDADYESTADISTICA5SEMESTRE.pdf"},
+  {t:"Guía de Estudio - 5° Semestre",a:"Material de apoyo",s:5,f:"Guía",n:"Intermedio",r:4,c:"#4a5568",d:"Guía de estudio para repasar los contenidos del quinto semestre.",pdf:"nuevos libros/Guiadeestudio5tosemestre.pdf"},
+  {t:"Aprende Python",a:"Material de apoyo",s:6,f:"Libro de texto",n:"Intermedio",r:4,c:"#2f855a",d:"Material de apoyo para aprender Python en sexto semestre.",pdf:"nuevos libros/Aprende-Python-6semestre.pdf"},
+  {t:"Probabilidad y Estadística (6° Semestre)",a:"Material de apoyo",s:6,f:"Libro de texto",n:"Avanzado",r:4,c:"#c53030",d:"Libro de texto de probabilidad y estadística de sexto semestre.",pdf:"nuevos libros/LIBRODETEXTOPROBABILIDADYESTADISTICA6SEMESTRE.pdf"},
+  {t:"Matemáticas Básicas",a:"Material de apoyo",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#2c5282",d:"Material de matemáticas básicas para sexto semestre.",pdf:"nuevos libros/MatemáticasBásicas6SEMESTRE.pdf"},
+  {t:"Técnicas y Conceptos Básicos en Matemáticas",a:"Material de apoyo",s:6,f:"Guía",n:"Intermedio",r:4,c:"#805ad5",d:"Técnicas y conceptos básicos en matemáticas para sexto semestre.",pdf:"nuevos libros/TécnicasyConceptosBásicosenMatemáticas6SEMESTRE.pdf"},
+
+  /* ---- Tercera tanda de libros nuevos ---- */
+  {t:"Álgebra de Baldor",a:"A. Baldor",s:1,f:"Libro de texto",n:"Intermedio",r:4,c:"#2b6cb0",d:"Álgebra de Baldor: el libro clásico para aprender álgebra con teoría y muchos ejercicios (287 páginas).",pdf:"nuevos libros/ALGEBRA1-SEMESTRE.pdf"},
+  {t:"Libro de Texto - Álgebra (2° Semestre)",a:"SEP",s:2,f:"Libro de texto",n:"Básico",r:4,c:"#3182ce",d:"Libro de texto de Matemáticas II de segundo semestre, edición del Telebachillerato Comunitario de la SEP.",pdf:"nuevos libros/LIBRODETEXTO-ALGEBRA-2 SEMESTRE.pdf"},
+  {t:"Libro de Texto - Cálculo (3° Semestre)",a:"SEP",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#2c5282",d:"Libro de texto de Matemáticas III de tercer semestre, edición del Telebachillerato Comunitario de la SEP.",pdf:"nuevos libros/LIBRODETEXTO-CALCULO-3SEMESTRE.pdf"},
+  {t:"Álgebra y Trigonometría con Geometría Analítica",a:"Earl W. Swokowski y Jeffery A. Cole",s:3,f:"Libro de texto",n:"Intermedio",r:4,c:"#805ad5",d:"Undécima edición (Thomson) de más de 1,000 páginas: ecuaciones, funciones, trigonometría, sistemas, sucesiones y geometría analítica.",pdf:"nuevos libros/ÁlgebrayTrigonometría _3SEMESTRE.pdf"},
+  {t:"Álgebra Moderna",a:"Frank Ayres Jr.",s:3,f:"Libro de texto",n:"Avanzado",r:4,c:"#5a3e85",d:"Libro de la serie Schaum (McGraw-Hill) de 252 páginas sobre álgebra moderna.",pdf:"nuevos libros/ALGEBRAMODERNA-3SEMESTRE.pdf"},
+  {t:"Libro de Texto - Aritmética (4° Semestre)",a:"SEP",s:4,f:"Libro de texto",n:"Avanzado",r:4,c:"#2b6cb0",d:"Libro de texto de Matemáticas IV de cuarto semestre, edición del Telebachillerato Comunitario de la SEP.",pdf:"nuevos libros/LIBRODETEXTO-ARITMETICA-4SEMESTRE.pdf"},
+
+  /* ---- Lecturas y libros de inglés ---- */
+  {t:"Libro de Inglés 2° Semestre (1)",a:"William Shakespeare",s:2,f:"Libro de texto",n:"Avanzado",r:4,c:"#0d9488",d:"Contiene «Romeo and Juliet». Obra de teatro sobre dos jóvenes enamorados de familias enemigas. Está en inglés (128 páginas).",pdf:"nuevos libros/libroingles2semestre.pdf"},
+  {t:"Libro de Inglés 2° Semestre (2)",a:"Jonathan Swift",s:2,f:"Libro de texto",n:"Avanzado",r:4,c:"#0f766e",d:"Contiene «Gulliver's Travels». Novela sobre los viajes de Gulliver a tierras fantásticas. Está en inglés (267 páginas).",pdf:"nuevos libros/libroingles2semestree.pdf"},
+  {t:"Libro de Inglés 2° Semestre (3)",a:"Mark Twain (Penguin Readers, nivel 1)",s:2,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «The Adventures of Tom Sawyer». Versión adaptada para aprender inglés de la novela de Mark Twain (35 páginas).",pdf:"nuevos libros/libroingles2semestreee.pdf"},
+  {t:"Libro de Inglés 2° Semestre (4)",a:"O. Henry (Penguin Readers, nivel 1)",s:2,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «The Gift of the Magi and Other Stories». Cuentos de O. Henry en versión adaptada para aprender inglés (32 páginas).",pdf:"nuevos libros/librosdeingles2semestre.pdf"},
+  {t:"Libro de Inglés 2° Semestre (5)",a:"Robert Louis Stevenson",s:2,f:"Libro de texto",n:"Intermedio",r:4,c:"#0d9488",d:"Contiene «A Child's Garden of Verses». Libro de poemas para niños publicado en 1885. Está en inglés (148 páginas).",pdf:"nuevos libros/librodeingles2semestre.pdf"},
+  {t:"Libro de Inglés 3° Semestre (1)",a:"Cuento tradicional",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «Little Red Riding Hood». El cuento clásico de Caperucita Roja en inglés, ideal para practicar lectura (5 páginas).",pdf:"nuevos libros/librodeingless3semestre.pdf"},
+  {t:"Libro de Inglés 3° Semestre (2)",a:"Jack London",s:3,f:"Libro de texto",n:"Avanzado",r:4,c:"#0d9488",d:"Contiene «The Sea-Wolf». Novela de aventuras ambientada en el mar. Está en inglés (274 páginas).",pdf:"nuevos libros/librodeingles3semestress.pdf"},
+  {t:"Libro de Inglés 3° Semestre (3)",a:"Lewis Carroll",s:3,f:"Libro de texto",n:"Intermedio",r:4,c:"#0f766e",d:"Contiene «Alice in Wonderland». Versión corta de Alicia en el país de las maravillas, en inglés (28 páginas).",pdf:"nuevos libros/librodeingles3semestresss.pdf"},
+  {t:"Libro de Inglés 3° Semestre (4)",a:"L. Frank Baum",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «The Wizard of Oz: The Cyclone». Capítulo en inglés donde comienza la historia de Dorothy en Kansas (14 páginas).",pdf:"nuevos libros/librodeingles3semestre.pdf"},
+  {t:"Libro de Inglés 3° Semestre (5)",a:"Derek Strange (Penguin Readers)",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «Girl Meets Boy». Historia en versión para aprender inglés sobre dos jóvenes que se conocen en unas vacaciones (34 páginas).",pdf:"nuevos libros/librodeingles3semestressss.pdf"},
+  {t:"Inglés - Guía de Actividades",a:"Material de apoyo",s:1,f:"Guía",n:"Básico",r:4,c:"#4a5568",d:"Guía de 25 páginas para practicar inglés básico: saludos y presentaciones, verbo to be, alfabeto, ocupaciones, nacionalidades, números y artículos.",pdf:"nuevos libros/Inglesguiadeactividades.pdf"},
+  {t:"Libro de Inglés 4° Semestre (1)",a:"Eleanor H. Porter",s:4,f:"Libro de texto",n:"Intermedio",r:4,c:"#0d9488",d:"Contiene «Pollyanna». Novela sobre una niña muy optimista. Está en inglés (173 páginas).",pdf:"nuevos libros/librodeingles4semestress.pdf"},
+  {t:"Libro de Inglés 4° Semestre (2)",a:"Herman Melville (Penguin Readers, nivel 2)",s:4,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «Moby Dick». Versión adaptada para aprender inglés de la novela de la gran ballena blanca (32 páginas).",pdf:"nuevos libros/librodeingles4semestre.pdf"},
+  {t:"Libro de Inglés 4° Semestre (3)",a:"Beatrix Potter",s:4,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «The Tale of Benjamin Bunny». Cuento ilustrado sobre un conejo travieso. Está en inglés (65 páginas).",pdf:"nuevos libros/librodeingles4semestre (3).pdf"},
+  {t:"Libro de Inglés 5° Semestre (1)",a:"Charles Perrault",s:5,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «The Sleeping Beauty in the Wood». El cuento de La Bella Durmiente en inglés (7 páginas).",pdf:"nuevos libros/librodeingles5semestre (5).pdf"},
+  {t:"Libro de Inglés 5° Semestre (2)",a:"Charles Perrault",s:5,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «Cinderella». El cuento de La Cenicienta en inglés (6 páginas).",pdf:"nuevos libros/librodeingles5semestre.pdf"},
+  {t:"Libro de Inglés 5° Semestre (3)",a:"Hermanos Grimm",s:5,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «Snow White». El cuento de Blancanieves en inglés (5 páginas).",pdf:"nuevos libros/librodeingles5semestre (2).pdf"},
+  {t:"Libro de Inglés 5° Semestre (4)",a:"Charles Perrault",s:5,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «Puss in Boots». El cuento del Gato con Botas en inglés (5 páginas).",pdf:"nuevos libros/librodeingles5semestre (3).pdf"},
+  {t:"Libro de Inglés 1° Semestre (1)",a:"Jane Austen",s:1,f:"Libro de texto",n:"Avanzado",r:4,c:"#0d9488",d:"Contiene «Pride and Prejudice». Novela clásica sobre las hermanas Bennet y el amor en la Inglaterra del siglo XIX. Está en inglés.",pdf:"nuevos libros/librodeingles1semestre.pdf"},
+  {t:"Libro de Inglés 1° Semestre (2)",a:"Arthur Conan Doyle",s:1,f:"Libro de texto",n:"Avanzado",r:4,c:"#0f766e",d:"Contiene «The Adventures of Sherlock Holmes». Colección de casos del detective Sherlock Holmes. Está en inglés (162 páginas).",pdf:"nuevos libros/librodeingles1semestre (2).pdf"},
+  {t:"Libro de Inglés 6° Semestre (1)",a:"Hermanos Grimm",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «The Town Musicians of Bremen». Cuento de cuatro animales que viajan juntos para ser músicos. Está en inglés (9 páginas).",pdf:"nuevos libros/librodeingles6semestre.pdf"},
+  {t:"Libro de Inglés 6° Semestre (2)",a:"Joseph Jacobs",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#0f766e",d:"Contiene «Jack and the Beanstalk». Cuento popular inglés sobre Jack y la planta mágica. Está en inglés (10 páginas).",pdf:"nuevos libros/librodeingles6semestre (3).pdf"},
+  {t:"Libro de Inglés 6° Semestre (3)",a:"Fábula tradicional",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#0d9488",d:"Contiene «The Town Mouse and the Country Mouse». Fábula sobre un ratón de ciudad que visita a su primo del campo. Está en inglés (3 páginas).",pdf:"nuevos libros/librodeingles6semestre (4).pdf"},
+  {t:"Libro de Inglés 6° Semestre (4)",a:"Rudyard Kipling",s:6,f:"Libro de texto",n:"Intermedio",r:4,c:"#0f766e",d:"Contiene «The Jungle Book». Historias de Mowgli, el niño criado por lobos en la selva. Está en inglés (334 páginas).",pdf:"nuevos libros/librodeingles6semestre (5).pdf"},
+
+  /* ---- Libros de Python y Android ---- */
+  {t:"Manual de Programación Android (3° Semestre)",a:"Salvador Gómez Oliver",s:3,f:"Libro de texto",n:"Intermedio",r:4,c:"#c05621",d:"Manual de 222 páginas (versión 2.0, 2011) para aprender a programar aplicaciones Android.",pdf:"nuevos libros/manualdeprogramacionandroid3semestre.pdf"},
+  {t:"Manual de Programación Android (5° Semestre)",a:"Salvador Gómez Oliver",s:5,f:"Libro de texto",n:"Intermedio",r:4,c:"#dd6b20",d:"Manual de 222 páginas (versión 2.0, 2011) para aprender a programar aplicaciones Android.",pdf:"nuevos libros/5tosemestree.pdf"},
+  {t:"Python for Everybody (Python para Todos)",a:"Charles R. Severance",s:3,f:"Libro de texto",n:"Básico",r:4,c:"#2f855a",d:"Introducción a los conceptos básicos de la programación con Python 3 (219 páginas), pensada para empezar desde cero.",pdf:"nuevos libros/pythonforeverybody3semestre.pdf"},
+  {t:"Fundamentos de Programación con Python",a:"Verónica Elizabeth Sánchez Aguiar",s:4,f:"Guía",n:"Básico",r:4,c:"#38a169",d:"Guía académica de 103 páginas para aprender los fundamentos de la programación con Python.",pdf:"nuevos libros/fundamentosdeprogramacionconpythonguiaacademica4tosemestre.pdf"},
+  {t:"A Byte of Python (5° Semestre)",a:"Swaroop C H",s:5,f:"Libro de texto",n:"Básico",r:4,c:"#2f855a",d:"Introducción a Python de Swaroop C H, escrita en inglés (130 páginas).",pdf:"nuevos libros/abyteofpython5semestre.pdf"},
+  {t:"A Byte of Python (6° Semestre)",a:"Swaroop C H",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#38a169",d:"Introducción a Python de Swaroop C H, escrita en inglés (130 páginas).",pdf:"nuevos libros/6tosemestre.pdf"},
+  {t:"Microbit y Python",a:"Federico Coca y Javier Quintana Peiró",s:2,f:"Libro de texto",n:"Básico",r:4,c:"#dd6b20",d:"Libro de 128 páginas para programar la placa micro:bit con Python.",pdf:"nuevos libros/microbitypython2parcial.pdf"},
+  {t:"Introducción a Python para Geociencias",a:"Material de apoyo",s:4,f:"Libro de texto",n:"Intermedio",r:4,c:"#c05621",d:"Libro de 224 páginas que enseña Python aplicado a las geociencias.",pdf:"nuevos libros/introduccionapythonparageociencias.pdf"},
+  {t:"Manual de Programación Android (2° Semestre)",a:"Salvador Gómez Oliver",s:2,f:"Libro de texto",n:"Intermedio",r:4,c:"#b45309",d:"Manual de 222 páginas (versión 2.0, 2011) para aprender a programar aplicaciones Android.",pdf:"nuevos libros/2doparcial.pdf"},
+  {t:"A Byte of Python (6° Semestre) (2)",a:"Swaroop C H",s:6,f:"Libro de texto",n:"Básico",r:4,c:"#2f855a",d:"Introducción a Python de Swaroop C H, escrita en inglés (130 páginas).",pdf:"nuevos libros/6semestre.pdf"},
+
+];
+
+/* ---------- ACCESO POR NÚMERO DE LISTA ----------
+   Reemplaza estos valores por los números del documento del profe.
+   Cada número va entre comillas y separado por coma. */
+const NUMEROS_PERMITIDOS = ["1","2","3","4","5","6","7","8","9","10"];
+
+/* ---------- ESTADO Y SESIÓN ---------- */
+let vista="inicio", fSem="todos", fFmt="todos", fNiv="todos", fCat="todos", texto="";
+let miBiblioteca = [];
+let recientes = [];
+let numeroActual = null;
+const CLAVE_SESION = "cecyteo_sesion";
+
+/* "Mi biblioteca" se guarda por número de lista: cada alumno tiene la suya */
+const claveBiblioteca = () => "cecyteo_biblioteca_" + numeroActual;
+
+/* "Vistos recientemente": los últimos libros abiertos, por número de lista (máx. 12) */
+const MAX_RECIENTES = 12;
+const claveRecientes = () => "cecyteo_recientes_" + numeroActual;
+
+function cargarRecientes(){
+  try {
+    const lista = JSON.parse(localStorage.getItem(claveRecientes()) || "[]");
+    return Array.isArray(lista) ? lista : [];
+  } catch (e) { return []; }
+}
+
+function guardarRecientes(){
+  try { localStorage.setItem(claveRecientes(), JSON.stringify(recientes)); } catch (e) {}
+}
+
+function registrarVisto(titulo){
+  recientes = [titulo].concat(recientes.filter(t => t !== titulo)).slice(0, MAX_RECIENTES);
+  guardarRecientes();
+}
+
+function cargarBiblioteca(){
+  try {
+    const lista = JSON.parse(localStorage.getItem(claveBiblioteca()) || "[]");
+    return Array.isArray(lista) ? lista : [];
+  } catch (e) { return []; }
+}
+
+const $ = id => document.getElementById(id);
+
+$("toggleAside").onclick = () => {
+  $("menuAside").classList.toggle("active");
+};
+
+function leerSesion(){
+  for (const almacen of [localStorage, sessionStorage]) {
+    try {
+      const s = JSON.parse(almacen.getItem(CLAVE_SESION));
+      if (s && NUMEROS_PERMITIDOS.includes(String(s.numero)) && s.nombre) return s;
+    } catch (e) {}
+  }
+  return null;
+}
+
+function guardarSesion(datos, persistente){
+  try { (persistente ? localStorage : sessionStorage).setItem(CLAVE_SESION, JSON.stringify(datos)); } catch (e) {}
+}
+
+function borrarSesion(){
+  try { localStorage.removeItem(CLAVE_SESION); sessionStorage.removeItem(CLAVE_SESION); } catch (e) {}
+}
+
+/* ---------- COLOR DE FONDO (se guarda por número de lista) ---------- */
+const COLOR_DEFECTO = "#f6faee";
+const TEMAS = [["#f6faee","CECyTE"],["#fff6d6","Crema"],["#e9eef5","Gris claro"],["#0a2a1a","Verde oscuro"],["#0b2a5b","Azul"],["#2a1650","Morado"],["#3a1020","Vino"],["#0a1220","Noche"],["#1e2229","Grafito"]];
+const VARS_TEMA = ["--bg","--bg2","--panel","--panel2","--line","--line-soft","--inset","--hover","--headbg","--txt","--muted","--muted2","--cyan","--cyan2","--cyan-dim","--on-cyan"];
+const claveColor = () => "cecyteo_color_" + numeroActual;
+
+const aRgb = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
+const aHex = c => "#" + c.map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
+const mezcla = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+
+function marcarTema(hex){
+  document.querySelectorAll(".tema").forEach(b => b.classList.toggle("on", b.dataset.color.toLowerCase() === hex.toLowerCase()));
+  $("colorFondo").value = hex;
+}
+
+function aplicarColor(hex){
+  const st = document.body.style;
+  VARS_TEMA.forEach(v => st.removeProperty(v));
+  if (!/^#[0-9a-f]{6}$/i.test(hex || "") || hex.toLowerCase() === COLOR_DEFECTO) { marcarTema(COLOR_DEFECTO); return; }
+
+  const base = aRgb(hex);
+  const claro = (0.299 * base[0] + 0.587 * base[1] + 0.114 * base[2]) / 255 > 0.6;
+  const hacia = claro ? [0, 0, 0] : [255, 255, 255];
+  const m = t => aHex(mezcla(base, hacia, t));
+  const bg2 = mezcla(base, hacia, .04);
+  const v = {
+    "--bg": hex, "--bg2": aHex(bg2),
+    "--panel": claro ? aHex(mezcla(base, [255,255,255], .6)) : m(.07),
+    "--panel2": m(.10), "--line": m(.16), "--line-soft": m(.09),
+    "--inset": claro ? "#ffffff" : aHex(mezcla(base, [0,0,0], .3)),
+    "--hover": m(.10), "--headbg": "rgba(" + bg2.map(Math.round).join(",") + ",.92)",
+    "--txt": claro ? "#14202e" : "#e8f1fb",
+    "--muted": claro ? "#4a5f78" : "#8ea7c4",
+    "--muted2": claro ? "#6b7f96" : "#5f7897"
+  };
+  if (!claro) Object.assign(v, {"--cyan":"#5fd37b","--cyan2":"#49bd66","--cyan-dim":"rgba(95,211,123,.15)","--on-cyan":"#08271a"});
+  Object.keys(v).forEach(k => st.setProperty(k, v[k]));
+  marcarTema(hex);
+}
+
+function elegirColor(hex){
+  aplicarColor(hex);
+  try { localStorage.setItem(claveColor(), hex); } catch (e) {}
+}
+
+TEMAS.forEach(([hex, nombre]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "tema"; b.title = nombre;
+  b.dataset.color = hex; b.style.background = hex;
+  b.onclick = () => elegirColor(hex);
+  $("temas").appendChild(b);
+});
+$("colorFondo").addEventListener("input", e => elegirColor(e.target.value));
+$("resetColor").onclick = () => {
+  aplicarColor(COLOR_DEFECTO);
+  try { localStorage.removeItem(claveColor()); } catch (e) {}
+};
+
+$("formLogin").addEventListener("submit", e => {
+  e.preventDefault();
+  const numero = $("numero").value.trim();
+  const nombre = $("usuario").value.trim();
+
+  if (!numero || !nombre) {
+    $("err").textContent = "Escribe tu número de lista y tu nombre para continuar.";
+    $("err").style.display = "block";
+    return;
+  }
+  if (!NUMEROS_PERMITIDOS.includes(numero)) {
+    $("err").textContent = "Ese número no está en la lista. Revísalo e inténtalo de nuevo.";
+    $("err").style.display = "block";
+    return;
+  }
+  $("err").style.display = "none";
+  guardarSesion({numero: numero, nombre: nombre}, $("recordar").checked);
+  entrar(nombre, numero);
+});
+
+function entrar(usuario, numero){
+  numeroActual = numero;
+  miBiblioteca = cargarBiblioteca();
+  recientes = cargarRecientes();
+  try { aplicarColor(localStorage.getItem(claveColor())); } catch (e) { aplicarColor(COLOR_DEFECTO); }
+  const nombre = usuario.charAt(0).toUpperCase() + usuario.slice(1);
+  $("nombreUser").textContent = nombre;
+  $("inicial").textContent = nombre.charAt(0);
+  document.body.classList.add("en-app");
+  $("login").style.display = "none";
+  $("app").style.display = "block";
+  limpiarFiltros();
+  irAVista("inicio");
+}
+
+$("salir").onclick = () => {
+  borrarSesion();
+  miBiblioteca = [];
+  recientes = [];
+  numeroActual = null;
+  aplicarColor(COLOR_DEFECTO);
+  document.body.classList.remove("en-app");
+  $("app").style.display = "none";
+  $("login").style.display = "grid";
+  $("formLogin").reset();
+  $("err").style.display = "none";
+};
+
+/* ---------- FILTROS ---------- */
+const cont = $("filtrosSem");
+["todos",1,2,3,4,5,6].forEach(s => {
+  const b = document.createElement("button");
+  b.className = "filter" + (s === "todos" ? " on" : "");
+  b.textContent = s === "todos" ? "Todos los semestres" : s + "° Semestre";
+  b.dataset.sem = s;
+  cont.appendChild(b);
+});
+
+document.querySelectorAll("aside").forEach(a => a.addEventListener("click", e => {
+  const b = e.target.closest(".filter"); if (!b) return;
+  const grupo = b.dataset.sem ? "sem" : b.dataset.fmt ? "fmt" : "niv";
+  b.parentElement.querySelectorAll("[data-" + grupo + "]").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+  if (grupo === "sem") fSem = b.dataset.sem;
+  if (grupo === "fmt") fFmt = b.dataset.fmt;
+  if (grupo === "niv") fNiv = b.dataset.niv;
+  render();
+}));
+
+/* Búsqueda sin importar mayúsculas ni acentos: "algebra" encuentra "Álgebra" */
+const normalizar = t => t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+$("buscar").oninput = e => { texto = normalizar(e.target.value.trim()); render(); };
+
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => irAVista(b.dataset.view));
+$("formHero").onsubmit = e => {
+  e.preventDefault();
+  const q = $("buscarHero").value.trim();
+  limpiarFiltros();
+  texto = normalizar(q); $("buscar").value = q;
+  irAVista("catalogo");
+};
+$("btnExplora").onclick = () => { limpiarFiltros(); irAVista("catalogo"); };
+$("btnMiBib").onclick = () => irAVista("biblioteca");
+$("verTodo").onclick = () => { limpiarFiltros(); irAVista("catalogo"); };
+$("chipCat").onclick = () => { fCat = "todos"; render(); };
+$("cerrarAside").onclick = () => $("menuAside").classList.remove("active");
+
+/* el mismo logo del login se usa en el encabezado y en la portada */
+$("logoHeader").src = $("logoLogin").src;
+$("logoPortada").src = $("logoLogin").src;
+$("logoCard").src = $("logoLogin").src;
+
+/* ---------- CATEGORÍAS Y PORTADA ---------- */
+const CATEGORIAS = [
+  {n:"Matemáticas",  ic:"🧮", c:"#e2735a"},
+  {n:"Programación", ic:"💻", c:"#f2b61f", t:"#3d2b00"},
+  {n:"Inglés",       ic:"📖", c:"#5faa5f"},
+  {n:"Todo el catálogo", ic:"📚", c:"#1b8a3b", todo:true}
+];
+const DESTACADOS = ["Aprende Python", "Álgebra de Baldor", "Eloquent JavaScript (4.ª edición)"];
+
+function categoria(l){
+  const t = normalizar(l.t);
+  if (/ingles/.test(t)) return "Inglés";
+  if (/programa|python|java|algoritm|datos|dfd|eloquent|plan de estudios|lenguajes|eventos|modulo/.test(t)) return "Programación";
+  return "Matemáticas";   // álgebra, cálculo, estadística, guías y cuadernillos de matemáticas
+}
+
+function limpiarFiltros(){
+  fSem = fFmt = fNiv = fCat = "todos"; texto = "";
+  $("buscar").value = ""; $("buscarHero").value = "";
+  document.querySelectorAll("aside .filter").forEach(b => {
+    const g = b.dataset.sem ? "sem" : b.dataset.fmt ? "fmt" : "niv";
+    b.classList.toggle("on", b.dataset[g] === "todos");
+  });
+}
+
+function irAVista(v){
+  vista = v;
+  $("menuAside").classList.remove("active");
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("on", x.dataset.view === v));
+  if (typeof window !== "undefined" && window.scrollTo) window.scrollTo(0, 0);
+  render();
+}
+
+function pintarInicio(){
+  $("lanTotal").textContent = LIBROS.length;
+  $("statLibros").textContent = LIBROS.length;
+  $("statCats").textContent = CATEGORIAS.length - 1;
+  $("saludo").textContent = "Hola, " + $("nombreUser").textContent + " 👋";
+  const cont = $("cats"); cont.innerHTML = "";
+  CATEGORIAS.forEach(c => {
+    const n = c.todo ? LIBROS.length : LIBROS.filter(l => categoria(l) === c.n).length;
+    const b = document.createElement("button");
+    b.className = "cat"; b.style.background = c.c; if (c.t) b.style.color = c.t;
+    b.innerHTML = '<span class="ic">' + c.ic + '</span>' + c.n + '<small>' + n + ' libros</small>';
+    b.onclick = () => { limpiarFiltros(); if (!c.todo) fCat = c.n; irAVista("catalogo"); };
+    cont.appendChild(b);
+  });
+  const d = $("destacados"); d.innerHTML = "";
+  LIBROS.filter(l => DESTACADOS.includes(l.t)).forEach(l => d.appendChild(tarjeta(l)));
+}
+
+/* ---------- RENDER DE TARJETAS ---------- */
+function tarjeta(l){
+    const guardadoYa = miBiblioteca.includes(l.t);
+    const el = document.createElement("article");
+    el.className = "book";
+    el.innerHTML =
+      '<div class="cover" style="background:linear-gradient(150deg,' + l.c + ',#0d1b2c)">' + l.t + '</div>' +
+      '<h3>' + l.t + '</h3><div class="by">Por ' + l.a + '</div>' +
+      '<div class="stars">' + "★".repeat(l.r) + "☆".repeat(5 - l.r) + '</div>' +
+      '<div class="tags"><span class="tag">' + l.s + '° Sem</span><span class="tag">' + l.f + '</span><span class="tag">' + l.n + '</span></div>' +
+      '<button class="b1">ABRIR / VER PDF</button>' +
+      '<button class="b2' + (guardadoYa ? ' saved' : '') + '">' + (guardadoYa ? '✓ EN MI BIBLIOTECA' : '🔖 AGREGAR A MI BIBLIOTECA') + '</button>' +
+      '<p>' + l.d + '</p>';
+    el.querySelector(".b1").onclick = () => abrir(l);
+    el.querySelector(".b2").onclick = () => alternar(l.t);
+  return el;
+}
+
+/* Libros que se sugieren cuando "Vistos recientemente" o "Mi biblioteca" todavía están vacíos */
+const SUGERIDOS = ["Álgebra de Baldor", "Aprende Python"];
+
+/* Oculta los botones de filtro que no darían ningún resultado y muestra cuántos libros trae cada uno */
+function coincide(l, sem, fmt, niv){
+  return (sem === "todos" || l.s == sem) && (fmt === "todos" || l.f === fmt) &&
+         (niv === "todos" || l.n === niv) && (fCat === "todos" || categoria(l) === fCat) &&
+         (normalizar(l.t).includes(texto) || normalizar(l.a).includes(texto) || normalizar(l.d).includes(texto));
+}
+
+function actualizarFiltros(){
+  document.querySelectorAll("aside .filter").forEach(b => {
+    const grupo = b.dataset.sem ? "sem" : b.dataset.fmt ? "fmt" : "niv";
+    const valor = b.dataset[grupo];
+    if (b.dataset.etiqueta === undefined) b.dataset.etiqueta = b.textContent;
+    const sem = grupo === "sem" ? valor : fSem, fmt = grupo === "fmt" ? valor : fFmt, niv = grupo === "niv" ? valor : fNiv;
+    const n = LIBROS.filter(l => coincide(l, sem, fmt, niv)).length;
+    b.innerHTML = b.dataset.etiqueta + (valor === "todos" ? "" : ' <small class="cuenta">' + n + '</small>');
+    b.style.display = "";
+    b.classList.toggle("sin", n === 0 && valor !== "todos");
+  });
+}
+
+function render(){
+  const enInicio = vista === "inicio";
+  document.body.classList.toggle("vista-inicio", enInicio);
+  $("landing").style.display = enInicio ? "block" : "none";
+  $("layoutApp").style.display = enInicio ? "none" : "";
+  if (enInicio) { pintarInicio(); return; }
+
+  let lista = LIBROS.filter(l => coincide(l, fSem, fFmt, fNiv));
+  if (vista === "biblioteca") lista = lista.filter(l => miBiblioteca.includes(l.t));
+  if (vista === "recientes") {
+    // en el orden en que los abrió: el más reciente primero
+    lista = lista.slice().sort((a, b) => recientes.indexOf(a.t) - recientes.indexOf(b.t))
+                 .filter(l => recientes.includes(l.t));
+  }
+  $("limpiarRec").style.display = (vista === "recientes" && recientes.length) ? "inline-block" : "none";
+
+  $("subtitulo").textContent =
+    vista === "biblioteca" ? "Tus libros guardados (" + miBiblioteca.length + ")"
+    : vista === "recientes" ? "Los últimos libros que abriste (" + recientes.length + ")"
+    : (fSem !== "todos" || fFmt !== "todos" || fNiv !== "todos" || fCat !== "todos" || texto)
+        ? "Mostrando " + lista.length + " de " + LIBROS.length + " títulos"
+        : LIBROS.length + " títulos disponibles · 1° a 6° semestre";
+  $("titulo").textContent = vista === "biblioteca" ? "Mi biblioteca" : vista === "recientes" ? "Vistos recientemente" : "Catálogo";
+  $("chipCat").style.display = fCat === "todos" ? "none" : "inline-flex";
+  $("chipCat").textContent = "Categoría: " + fCat + "  ✕";
+
+  const grid = $("grid");
+  grid.innerHTML = "";
+  const sinFiltros = !texto && fSem === "todos" && fFmt === "todos" && fNiv === "todos" && fCat === "todos";
+  $("vacio").style.display = lista.length ? "none" : "block";
+  if (!lista.length) {
+    $("vacio").innerHTML = "No hay un libro que coincida con tu búsqueda." +
+      (sinFiltros ? "" : ' <button class="chip" id="btnQuitar" type="button">Quitar filtros</button>');
+    if (!sinFiltros) $("btnQuitar").onclick = () => { limpiarFiltros(); render(); };
+  }
+
+  lista.forEach(l => grid.appendChild(tarjeta(l)));
+
+  if (!lista.length && sinFiltros && (vista === "recientes" || vista === "biblioteca")) {
+    const aviso = document.createElement("p");
+    aviso.className = "sugerido";
+    aviso.textContent = vista === "recientes"
+      ? "Todavía no has abierto ningún libro. Te sugerimos empezar con estos:"
+      : "Todavía no has guardado ningún libro. Te sugerimos empezar con estos:";
+    grid.appendChild(aviso);
+    LIBROS.filter(l => SUGERIDOS.includes(l.t)).forEach(l => grid.appendChild(tarjeta(l)));
+    $("vacio").style.display = "none";
+  }
+  actualizarFiltros();
+}
+
+function alternar(titulo){
+  const i = miBiblioteca.indexOf(titulo);
+  i === -1 ? miBiblioteca.push(titulo) : miBiblioteca.splice(i, 1);
+  try { localStorage.setItem(claveBiblioteca(), JSON.stringify(miBiblioteca)); } catch (e) {}
+  render();
+}
+
+/* ---------- LECTOR PDF Y MODAL ---------- */
+/* Nombres de archivo: Windows y las descargas cambian espacios, guiones bajos y paréntesis.
+   Si el nombre exacto no existe, se prueban las variantes más comunes. */
+function variantes(ruta){
+  const i = ruta.lastIndexOf("/");
+  const dir = ruta.slice(0, i + 1), f = ruta.slice(i + 1);
+  const quita = x => x.replace(/\s+\(/g, "(");                 // "x (3).pdf" -> "x(3).pdf"
+  const pon   = x => x.replace(/(\S)\(/g, "$1 (");              // "x(3).pdf"  -> "x (3).pdf"
+  const par2u = x => x.replace(/\s*\((\d+)\)/g, "_$1_");           // "x (3).pdf" -> "x_3_.pdf"
+  const sp2u  = x => x.replace(/ /g, "_");
+  const u2sp  = x => x.replace(/_+/g, " ");
+  const dobles = [x => x.replace(/__/g, " _"), x => x.replace(/__/g, " "), x => x.replace(/__/g, "  "), x => x.replace(/__/g, "_"), x => x.replace(/__/g, " - "), x => x.replace(/__/g, "-")];
+  const base = [x => x, quita, pon, par2u, sp2u, u2sp, x => sp2u(quita(x)), x => u2sp(quita(x))];
+  const set = new Set();
+  base.concat(dobles).forEach(g => set.add(g(f)));
+  dobles.forEach(d => base.forEach(g => set.add(g(d(f)))));
+  return Array.from(set).map(n => dir + n);
+}
+
+async function resolverPdf(ruta){
+  const lista = variantes(ruta);
+  if (location.protocol === "file:") return lista[0];       // sin servidor no se puede comprobar
+  for (const n of lista) {
+    try {
+      let r = await fetch(encodeURI(n), {method: "HEAD", cache: "no-store"});
+      if (r.status === 405 || r.status === 501)   // algunos servidores no aceptan HEAD
+        r = await fetch(encodeURI(n), {headers: {Range: "bytes=0-0"}, cache: "no-store"});
+      if (r.ok) return n;
+    } catch (e) {}
+  }
+  return null;
+}
+
+function esCelular(){
+  return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 860px)").matches;
+}
+
+async function abrir(l){
+  registrarVisto(l.t);
+  $("rTitulo").textContent = l.t;
+  $("rAutor").textContent = "Por " + l.a + " · " + l.s + "° semestre · " + l.n;
+  
+  if(l.pdf && l.pdf.trim() !== "") {
+    $("rCuerpo").innerHTML = "<p style='padding:14px;'>Buscando el archivo…</p>";
+    $("modal").classList.add("open");
+    const ruta = await resolverPdf(l.pdf);
+    if (ruta) {
+      const url = encodeURI(ruta);
+      const enlaces = '<div class="acciones-pdf"><a class="btn-pdf" href="' + url + '" target="_blank" rel="noopener">↗ Abrir en pestaña nueva</a>' +
+                      '<a class="btn-pdf sec" href="' + url + '" download>⬇ Descargar</a></div>';
+      $("rCuerpo").innerHTML = esCelular()
+        ? '<p class="nota-cel">En el celular el PDF se lee mejor en su propia pestaña o en tu visor de PDF. Toca el botón para abrirlo.</p>' + enlaces
+        : enlaces + '<iframe src="' + url + '"></iframe>';
+    } else {
+      $("rCuerpo").innerHTML =
+        "<p style='margin-bottom:10px;'><b>No encontré el archivo.</b></p>" +
+        "<p style='color:#ff7b7b; font-size:13px;'>Busqué <b id='nombreFalta'></b> dentro de la carpeta y no existe. Revisa que el PDF esté ahí y que se llame igual (mayúsculas, espacios y paréntesis).</p>";
+      $("nombreFalta").textContent = l.pdf.split("/").pop();
+    }
+  } else {
+    $("rCuerpo").innerHTML = 
+      "<p style='margin-bottom:10px;'><b>Sinopsis:</b> " + l.d + "</p>" +
+      "<p style='color:#ff7b7b; font-size:13px;'>Este libro aún no tiene un archivo PDF vinculado en la carpeta.</p>";
+  }
+  
+  $("modal").classList.add("open");
+}
+$("cerrar").onclick = () => { $("modal").classList.remove("open"); if (vista === "recientes") render(); };
+
+$("limpiarRec").onclick = () => {
+  recientes = [];
+  guardarRecientes();
+  render();
+};
+$("modal").onclick = e => { if (e.target.id === "modal") { $("modal").classList.remove("open"); if (vista === "recientes") render(); } };
+
+/* Si ya había una sesión válida, entra directo (va al final para que todo esté cargado) */
+const sesionActiva = leerSesion();
+if (sesionActiva) entrar(sesionActiva.nombre, String(sesionActiva.numero));
+</script>
+</body>
+</html>
